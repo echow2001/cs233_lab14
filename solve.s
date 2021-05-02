@@ -7,8 +7,7 @@ SUBMIT_SOLUTION         = 0xffff00d4
 LINE_OFFSET = 16
 PUZZLE_SIZE = 512
 SOLUTION_SIZE = 64
-
-
+######puzzle solve code given######
 solve_puzzle:
   sub $sp, $sp, 32
   sw $ra, 0($sp)
@@ -249,3 +248,4 @@ end_for_disjoint_regions:
         lw      $s7, 32($sp)
         add     $sp, $sp, 36
         jr      $ra
+######puzzle solve code given######

@@ -1,5 +1,10 @@
 # MINIMAL EXAMPLE OF INTEGRATING PUZZLE SOLVING.
 # THIS FILE IS NOT GRADED
+### syscall constants
+PRINT_STRING            = 4
+PRINT_CHAR              = 11
+PRINT_INT               = 1
+LINE_OFFSET = 16
 
 # interrupt constants
 
@@ -9,7 +14,6 @@ REQUEST_PUZZLE_ACK      = 0xffff00d8
 REQUEST_PUZZLE          = 0xffff00d0
 SUBMIT_SOLUTION         = 0xffff00d4
 
-LINE_OFFSET = 16
 PUZZLE_SIZE = 512
 SOLUTION_SIZE = 64
 
@@ -29,7 +33,7 @@ main:
   or  $t4, $t4, 1
 
   li  $t1, 0
-  sw  $t1, THROW_PUZZLE
+  #sw  $t1, THROW_PUZZLE
 
   mtc0  $t4, $12
 
