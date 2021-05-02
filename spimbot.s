@@ -190,6 +190,29 @@ main:
     lw $t3 0($t0)
     srl $t3 $t3 16
     bgt $t3 $0 break3
+##13*8 water x (10,4) (9,4) (9,5)
+## 4*8 water y 
+    li $t2, 180
+    sw $t2, ANGLE
+    li $t2, 1 
+    sw $t2, ANGLE_CONTROL
+    li $a2, 5
+    li $a0, 90
+    jal go_to_x 
+
+    li $t2, 90
+    sw $t2, ANGLE
+    li $t2, 1 
+    sw $t2, ANGLE_CONTROL 
+    li $a2, 5
+    li $a1, 30
+    jal go_to_y
+    li $t2 0x0a04
+    sw $t2 USE_BLOCK
+    li $t2 0x0904
+    sw $t2 USE_BLOCK
+    li $t2 0x0905
+    sw $t2 USE_BLOCK
 
     li $t2 0x07 
     sw $t2 CRAFT
