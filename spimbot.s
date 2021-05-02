@@ -98,7 +98,7 @@ ID_WATER                = 9  # not an item
 puzzle_ready: .word 0
 puzzle_solution: .space SOLUTION_SIZE
 puzzle_data: .space PUZZLE_SIZE
-
+map_data: .space 6400
 ### Puzzle
 
 inventory:    .word 0:8
@@ -127,15 +127,38 @@ main:
     beq $t1 $0 wait0
     jal solve_puzzle
     sw $0, puzzle_ready
-
-    li $t2, 90
+# gather resource
+    li $t2, 0
     sw $t2, ANGLE
     li $t2, 1 
     sw $t2, ANGLE_CONTROL
 
     li $a2, 5
-    li $a1, 0x16
-    jal go_to_y
+    li $a0, 118
+    jal go_to_x 
+    #break the sheep at (13,1) 
+    li $t2 0x0D01
+    break0:
+    sw $t2 BREAK_BLOCK
+    la $t0 map_data
+    sw $t0 GET_MAP
+    #map[a][b] = 0xDDDDtobw
+    #access map[1][13]=map[53]
+    addi $t0 $t0 212
+    lw $t3 0($t0)
+    srl $t3 $t3 16
+    bgt $t3 $0 break0
+
+    #break the sheep at (14,1) 
+    li $t2 0x0E01
+    break1:
+    sw $t2 BREAK_BLOCK
+    la $t0 map_data
+    sw $t0 GET_MAP
+    addi $t0 $t0 216
+    lw $t3 0($t0)
+    srl $t3 $t3 16
+    bgt $t3 $0 break1
 
     li $t2, 0
     sw $t2, ANGLE
@@ -143,47 +166,31 @@ main:
     sw $t2, ANGLE_CONTROL
 
     li $a2, 5
-    li $a0, 25
-    jal go_to_x
+    li $a0, 162
+    jal go_to_x 
 
-    # water at 3, 3
-    li $t2 0x0303
-    sw $t2 USE_BLOCK
-    
-    
-    #j infinite
-
-
-    li $a2, 5
-    li $a0, 300
-    jal go_to_x
-
-    # stone at 37, 3
-    li $t2 0x2503
+    #break the tree at (22,1) 
+    li $t2 0x1601
+    break2:
     sw $t2 BREAK_BLOCK
-    
-    #j infinite
+    la $t0 map_data
+    sw $t0 GET_MAP
+    addi $t0 $t0 248
+    lw $t3 0($t0)
+    srl $t3 $t3 16
+    bgt $t3 $0 break2
 
-    li $a2, 5
-    li $a1, 300
-    jal go_to_y
-    # sheeps at 36, 37
-    li $t2 0x2425
+    #break the tree at (22,0) 
+    li $t2 0x1600
+    break3:
     sw $t2 BREAK_BLOCK
+    la $t0 map_data
+    sw $t0 GET_MAP
+    addi $t0 $t0 88
+    lw $t3 0($t0)
+    srl $t3 $t3 16
+    bgt $t3 $0 break3
 
-
-    li $t2, 180
-    sw $t2, ANGLE
-    li $t2, 1 
-    sw $t2, ANGLE_CONTROL
-    li $a2, 5
-    li $a0, 40
-    jal go_to_x
-    # tree at 36, 37
-    li $t2 0x0524
-    sw $t2 BREAK_BLOCK
-    # break block by store column idx in the upper 8 bits, row index in the lower 8 bits
-    # to the memory address BREAK_BLOCK.
     li $t2 0x07 
     sw $t2 CRAFT
 infinite:
