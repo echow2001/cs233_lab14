@@ -161,6 +161,43 @@ main:
     #break the tree at (22,0) 
     li $a0 0x1600
     jal break_completely
+
+    #break the tree at (22,3) 
+    li $a0 0x1601
+    jal break_completely
+
+    lw $a0, BOT_X
+    addi $a0 $a0 12
+    li $t2 0
+    sw $t2, ANGLE
+    li $t2, 1 
+    sw $t2, ANGLE_CONTROL 
+    li $a2 10
+    jal go_to_x
+
+     #break the tree at (23,1) 
+    li $a0 0x1701
+    jal break_completely
+
+    #break the tree at (23,0) 
+    li $a0 0x1700
+    jal break_completely
+
+    lw $a0, BOT_X
+    addi $a0 $a0 12
+    li $t2 0
+    sw $t2, ANGLE
+    li $t2, 1 
+    sw $t2, ANGLE_CONTROL 
+    li $a2 10
+    jal go_to_x
+
+    #break the tree at (24,1) 
+    li $a0 0x1801
+    jal break_completely
+    #break the tree at (24,2) 
+    li $a0 0x1802
+    jal break_completely
 ##13*8 water x (10,4) (9,4) (9,5)
 ## 4*8 water y 
     li $t2, 180
@@ -182,15 +219,22 @@ main:
     sw $t2 USE_BLOCK
     li $t2 0x0904
     sw $t2 USE_BLOCK
-    li $t2 0x0905
-    sw $t2 USE_BLOCK
+    #li $t2 0x0905
+    #sw $t2 USE_BLOCK
+    li $a0 0x0906
+    jal break_completely
+    li $a0 0x0907
+    jal break_completely
+    li $a0 0x0a05
+
+
 
     li $t2, 30
     sw $t2, ANGLE
     li $t2, 1 
     sw $t2, ANGLE_CONTROL 
     li $a2, 10
-    li $a0, 120
+    li $a0, 130
     jal go_to_x
 
     #break the stone at (16,7) 
@@ -200,18 +244,34 @@ main:
     li $a0 0x1008
     jal break_completely
 
+    li $t2 180
+    sw $t2, ANGLE
+    li $t2, 1 
+    sw $t2, ANGLE_CONTROL 
+    li $a0 20
+    jal go_to_x
+
+    li $t2 90
+    sw $t2, ANGLE
+    li $t2, 1 
+    sw $t2, ANGLE_CONTROL 
+    li $a1 140
+    jal go_to_y
+
+    #break the sheep at (2,20) 
+    li $a0 0x0214
+    jal break_completely
+
     li $t2 0x05  
     sw $t2 CRAFT
 
 
 infinite:
     j infinite
-#a0 position
+#a0 position in format 0x0000xxyy
 break_completely:
-    #li $t2 0x1008
-    #add to t0 4(40y+x)
-    #t1 suppose to be 212 for first call
-    li $t1 0x00000011
+    #add to t0 4(40y+x) calculate byte offset for map array
+    li $t1 0x000000FF
     and $t1 $t1 $a0 
     li $t2 40
     mul $t1 $t1 $t2
@@ -220,12 +280,12 @@ break_completely:
     srl $t2 $a0 8 
     add $t1 $t2 $t1
     sll $t1 $t1 2 
+
     break_loop:
     sw $a0 BREAK_BLOCK
     la $t0 map_data
     sw $t0 GET_MAP
     add $t0 $t1 $t0 
-
     lw $t3 0($t0)
     srl $t3 $t3 16
     bgt $t3 $0 break_loop
