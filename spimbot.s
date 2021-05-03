@@ -98,6 +98,7 @@ ID_WATER                = 9  # not an item
 puzzle_ready: .word 0
 puzzle_solution: .space SOLUTION_SIZE
 puzzle_data: .space PUZZLE_SIZE
+
 map_data: .space 6400
 ### Puzzle
 
@@ -133,70 +134,40 @@ main:
     li $t2, 1 
     sw $t2, ANGLE_CONTROL
 
-    li $a2, 5
+    li $a2, 10
     li $a0, 118
     jal go_to_x 
     #break the sheep at (13,1) 
-    li $t2 0x0D01
-    break0:
-    sw $t2 BREAK_BLOCK
-    la $t0 map_data
-    sw $t0 GET_MAP
-    #map[a][b] = 0xDDDDtobw
-    #access map[1][13]=map[53]
-    addi $t0 $t0 212
-    lw $t3 0($t0)
-    srl $t3 $t3 16
-    bgt $t3 $0 break0
+    li $a0 0x0D01
+    jal break_completely
 
     #break the sheep at (14,1) 
-    li $t2 0x0E01
-    break1:
-    sw $t2 BREAK_BLOCK
-    la $t0 map_data
-    sw $t0 GET_MAP
-    addi $t0 $t0 216
-    lw $t3 0($t0)
-    srl $t3 $t3 16
-    bgt $t3 $0 break1
+    li $a0 0x0E01
+    jal break_completely
 
     li $t2, 0
     sw $t2, ANGLE
     li $t2, 1 
     sw $t2, ANGLE_CONTROL
 
-    li $a2, 5
+    li $a2, 10
     li $a0, 162
     jal go_to_x 
 
     #break the tree at (22,1) 
-    li $t2 0x1601
-    break2:
-    sw $t2 BREAK_BLOCK
-    la $t0 map_data
-    sw $t0 GET_MAP
-    addi $t0 $t0 248
-    lw $t3 0($t0)
-    srl $t3 $t3 16
-    bgt $t3 $0 break2
+    li $a0 0x1601
+    jal break_completely
 
     #break the tree at (22,0) 
-    li $t2 0x1600
-    break3:
-    sw $t2 BREAK_BLOCK
-    la $t0 map_data
-    sw $t0 GET_MAP
-    addi $t0 $t0 88
-    lw $t3 0($t0)
-    srl $t3 $t3 16
-    bgt $t3 $0 break3
+    li $a0 0x1600
+    jal break_completely
 ##13*8 water x (10,4) (9,4) (9,5)
 ## 4*8 water y 
     li $t2, 180
     sw $t2, ANGLE
     li $t2, 1 
     sw $t2, ANGLE_CONTROL
-    li $a2, 5
+    li $a2, 10
     li $a0, 90
     jal go_to_x 
 
@@ -204,7 +175,7 @@ main:
     sw $t2, ANGLE
     li $t2, 1 
     sw $t2, ANGLE_CONTROL 
-    li $a2, 5
+    li $a2, 10
     li $a1, 30
     jal go_to_y
     li $t2 0x0a04
@@ -214,10 +185,51 @@ main:
     li $t2 0x0905
     sw $t2 USE_BLOCK
 
-    li $t2 0x07 
+    li $t2, 30
+    sw $t2, ANGLE
+    li $t2, 1 
+    sw $t2, ANGLE_CONTROL 
+    li $a2, 10
+    li $a0, 120
+    jal go_to_x
+
+    #break the stone at (16,7) 
+    li $a0 0x1007
+    jal break_completely
+
+    li $a0 0x1008
+    jal break_completely
+
+    li $t2 0x05  
     sw $t2 CRAFT
+
+
 infinite:
     j infinite
+#a0 position
+break_completely:
+    #li $t2 0x1008
+    #add to t0 4(40y+x)
+    #t1 suppose to be 212 for first call
+    li $t1 0x00000011
+    and $t1 $t1 $a0 
+    li $t2 40
+    mul $t1 $t1 $t2
+    #li $t2 0x00001100
+    #and $t2 $a0 $t2
+    srl $t2 $a0 8 
+    add $t1 $t2 $t1
+    sll $t1 $t1 2 
+    break_loop:
+    sw $a0 BREAK_BLOCK
+    la $t0 map_data
+    sw $t0 GET_MAP
+    add $t0 $t1 $t0 
+
+    lw $t3 0($t0)
+    srl $t3 $t3 16
+    bgt $t3 $0 break_loop
+    jr $ra
 go_to: 
 #a0 target x cordinate 
 #a1 target y coordinate
