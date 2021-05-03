@@ -1,0 +1,16 @@
+  Our main focus initially for the SPIMbot was survival - of course. We wanted to make sure that, above all else, we could at least 
+survive long enough to collect some points before focusing on efficiency of collecting resources. Another factor we took into 
+account regarding survival was the bed. Losing additional points for dying without a bed makes it extremely pertinent to the bots 
+performance. After survival, we focused simply on collecting the hard-coded resources while maintaining the integrity of the 
+survival of our bot. Keeping it simple and trying to integrate resource collection into our survival code made it easier to get 
+consistent points. This strategy carried throughout our entire implementation.
+  On the topic of implementation, we coded everything initially in assembly, instead of C++ and then hand-compiling to assembly. 
+We realized pretty late in the implementation that this could have been more productive and quicker for the more advanced parts 
+of the code, but by the time we realized it made more sense to continue in assembly throughout the entire thing.
+	For the movement of our bot we decided to use BOT_X and BOT_Y since the resource blocks were hard-coded locations. 
+It made more sense to do it this way to us, and as such had three functions for our movement (go_to, go_to_x, and go_to_y) to 
+control the bot in a very mechanical way which made it relatively easy to track.
+	One of the more crucial parts of our code came in the break_completely function, which ensures that a block is completely broken 
+(as the name suggests). We calculated the offset of durability remaining on the block with 4(40y+x) at the position (x,y). 
+Again, this is a survival-focused implementation, where the more complex parts of our code are focused around gathering 
+resources so that the bot can survive. 
