@@ -227,8 +227,6 @@ main:
     jal break_completely
     li $a0 0x0a05
 
-
-
     li $t2, 30
     sw $t2, ANGLE
     li $t2, 1 
@@ -241,8 +239,8 @@ main:
     li $a0 0x1007
     jal break_completely
 
-    li $a0 0x1008
-    jal break_completely
+ #   li $a0 0x1008
+ #   jal break_completely
 
     li $t2 180
     sw $t2, ANGLE
@@ -257,15 +255,119 @@ main:
     sw $t2, ANGLE_CONTROL 
     li $a1 140
     jal go_to_y
-
+    #(18,1)
     #break the sheep at (2,20) 
-    li $a0 0x0214
+    li $a0 0x0212
     jal break_completely
+
+  #  lw $t0 BOT_X
+  #  lw $t1 BOT_Y
 
     li $t2 0x05  
     sw $t2 CRAFT
+    
+    li $t2 90
+    sw $t2, ANGLE
+    li $t2, 1 
+    sw $t2, ANGLE_CONTROL 
+    li $a1 180
+    jal go_to_y
+#ttttXXYY (2,23)
+    li $t2 0x00050217
+    sw $t2 PLACE_BLOCK
+    #move right 48 and break_completely 12 trees 
+    li $t2 3
+    sw $t2, ANGLE
+    li $t2, 1
+    sw $t2, ANGLE_CONTROL 
+    li $a0 72
+    jal go_to_x
+    #break tree at (9,23) (10,23) (8,23) 
+    li $a0 0x00000917
+    jal break_completely
+    li $a0 0x00000a17
+    jal break_completely
+    li $a0 0x00000b17
+    jal break_completely
+    li $a0 0x00000916
+    jal break_completely
+# request puzzle write the address of the start of puzzlewrapper struct addr to the PUZZLE_REQUEST MMIO address
+    li $t3 3
+    build_thewall_solve:
+    la $t2 puzzle_data
+    sw $t2 REQUEST_PUZZLE
+    wait1:
+    lw $t1 puzzle_ready
+    beq $t1 $0 wait1
+    jal solve_puzzle
+    sw $0, puzzle_ready
+    bgt $t3 $0 build_thewall_solve
 
+    #craft door+ 3 wall
+    li $t2 0x07
+    sw $t2 CRAFT
+    li $t2 0x03
+    li $t1 3
+    build_thewall:
+    sw $t2 CRAFT
+    addi $t1 $t1 -1
+    bgt $t1 $0 build_thewall
 
+    li $a0 0x00000a16
+    jal break_completely
+    li $a0 0x00000b16
+    jal break_completely
+    li $a0 0x00000918
+    jal break_completely
+    li $a0 0x00000a18
+    jal break_completely
+    li $a0 0x00000b18
+    jal break_completely
+    li $a0 0x00000818
+    jal break_completely
+    li $a0 0x00000817
+    jal break_completely
+    li $a0 0x00000816
+    jal break_completely
+    
+    li $t2 180
+    sw $t2, ANGLE
+    li $t2, 0
+    sw $t2, ANGLE_CONTROL 
+    li $a0 20
+    jal go_to_x
+
+    #craft wood while inventory wood!=0
+    li $t2 0x03
+    li $t1 4
+    wall_untilEmpty:
+    sw $t2 CRAFT
+    addi $t1 $t1 -1
+    bgt $t1 $0 wall_untilEmpty
+#       www  0116 0117 0118
+#       w.w  0216      0218
+#       www  0316 0317 0318
+    li $t2 0x00030116
+    sw $t2 PLACE_BLOCK
+    addi $t2 $t2 1
+    sw $t2 PLACE_BLOCK
+    addi $t2 $t2 1
+    sw $t2 PLACE_BLOCK
+
+    li $t2 0x00030316
+    sw $t2 PLACE_BLOCK
+    addi $t2 $t2 1
+    sw $t2 PLACE_BLOCK
+    addi $t2 $t2 1
+    sw $t2 PLACE_BLOCK
+
+    li $t2 0x00030216
+    sw $t2 PLACE_BLOCK
+    li $t2 0x00070218
+    sw $t2 PLACE_BLOCK
+
+    li $t2 0x00000217
+    sw $t2 SUBMIT_BASE
 infinite:
     j infinite
 #a0 position in format 0x0000xxyy
@@ -282,7 +384,7 @@ break_completely:
     sll $t1 $t1 2 
 
     break_loop:
-    sw $a0 BREAK_BLOCK
+    sw $a0 BREAK_BLOCK  
     la $t0 map_data
     sw $t0 GET_MAP
     add $t0 $t1 $t0 
@@ -350,8 +452,6 @@ for_loop_draw_line:
         j       for_loop_draw_line
 end_for_draw_line:
         jr      $ra
-
-
 
 .globl flood_fill
 flood_fill:
